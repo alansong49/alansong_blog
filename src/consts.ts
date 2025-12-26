@@ -11,6 +11,6 @@ export const GITHUB_CONFIG = {
 	OWNER: process.env.NEXT_PUBLIC_GITHUB_OWNER || 'alansong49',
 	REPO: process.env.NEXT_PUBLIC_GITHUB_REPO || 'alansong_blog',
 	BRANCH: process.env.NEXT_PUBLIC_GITHUB_BRANCH || 'main',
-	APP_ID: process.env.NEXT_PUBLIC_GITHUB_APP_ID || '-',
-	ENCRYPT_KEY: process.env.NEXT_PUBLIC_GITHUB_ENCRYPT_KEY || '2539937',
+	APP_ID: process.env.NEXT_PUBLIC_GITHUB_APP_ID || '2539937',
+	ENCRYPT_KEY: process.env.NEXT_PUBLIC_GITHUB_ENCRYPT_KEY || 'wudishiduomejimo',
 } as const
