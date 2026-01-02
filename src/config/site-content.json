@@ -1,0 +1,106 @@
+{
+	"meta": {
+		"title": "止渊的博客",
+		"description": "止渊 的个人博客，记录前端开发、探索、笔记。前端 UI 更新代码仓库。",
+		"username": "alan"
+	},
+	"theme": {
+		"colorBrand": "#A788AE",
+		"colorPrimary": "#e6e8e8",
+		"colorSecondary": "#acadae",
+		"colorBrandSecondary": "#51d0b9",
+		"colorBg": "#0a051f",
+		"colorBorder": "#8a8a8a5e",
+		"colorCard": "#393838c3",
+		"colorArticle": "#6f6f6f33"
+	},
+	"backgroundColors": [
+		"#0733BB",
+		"#91C47C",
+		"#7B1435",
+		"#813057",
+		"#A52B8D",
+		"#2632BD"
+	],
+	"artImages": [
+		{
+			"id": "cat",
+			"url": "/images/art/cat.png"
+		},
+		{
+			"id": "a46372ff45bc5524",
+			"url": "/images/art/a46372ff45bc5524.jpg"
+		}
+	],
+	"currentArtImageId": "a46372ff45bc5524",
+	"backgroundImages": [
+		{
+			"id": "",
+			"url": ""
+		},
+		{
+			"id": "url-1767332178712",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlmDO.jpg"
+		},
+		{
+			"id": "url-1767332192184",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlNqS.jpg"
+		},
+		{
+			"id": "url-1767332201479",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlfIJ.jpg"
+		},
+		{
+			"id": "url-1767332207588",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlEgx.webp"
+		},
+		{
+			"id": "url-1767332214539",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGldaQ.jpg"
+		},
+		{
+			"id": "url-1767332222559",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGl82t.jpg"
+		},
+		{
+			"id": "url-1767332229662",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlaVg.jpg"
+		}
+	],
+	"currentBackgroundImageId": "url-1767332229662",
+	"socialButtons": [
+		{
+			"id": "github",
+			"type": "github",
+			"value": "https://github.com/dashboard",
+			"label": "Github",
+			"order": 3
+		},
+		{
+			"id": "juejin",
+			"type": "bilibili",
+			"value": "https://space.bilibili.com/2145392169",
+			"label": "哔哩哔哩",
+			"order": 2
+		},
+		{
+			"id": "email",
+			"type": "email",
+			"value": "2602753839@qq.com",
+			"label": "",
+			"order": 1
+		}
+	],
+	"clockShowSeconds": false,
+	"summaryInContent": false,
+	"isCachePem": false,
+	"hideEditButton": false,
+	"enableCategories": true,
+	"currentHatIndex": 3,
+	"hatFlipped": false,
+	"enableChristmas": false,
+	"beian": {
+		"text": "萌ICP备20260016号",
+		"link": "https://icp.gov.moe/?keyword=20260016"
+	}
+}

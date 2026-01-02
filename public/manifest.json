@@ -1,0 +1,10 @@
+{
+	"short_name": "",
+	"name": "",
+	"start_url": ".",
+
+	"form_factor": "wide",
+
+	"icons": [],
+	"display": "standalone"
+}
