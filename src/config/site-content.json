@@ -9,7 +9,7 @@
 		"colorPrimary": "#e6e8e8",
 		"colorSecondary": "#acadae",
 		"colorBrandSecondary": "#51d0b9",
-		"colorBg": "#0d0d0d",
+		"colorBg": "#0a051f",
 		"colorBorder": "#8a8a8a5e",
 		"colorCard": "#ffffff0e",
 		"colorArticle": "#6f6f6f33"
@@ -37,9 +37,37 @@
 		{
 			"id": "",
 			"url": ""
+		},
+		{
+			"id": "url-1767332178712",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlmDO.jpg"
+		},
+		{
+			"id": "url-1767332192184",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlNqS.jpg"
+		},
+		{
+			"id": "url-1767332201479",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlfIJ.jpg"
+		},
+		{
+			"id": "url-1767332207588",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlEgx.webp"
+		},
+		{
+			"id": "url-1767332214539",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGldaQ.jpg"
+		},
+		{
+			"id": "url-1767332222559",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGl82t.jpg"
+		},
+		{
+			"id": "url-1767332229662",
+			"url": "https://s21.ax1x.com/2025/07/23/pVGlaVg.jpg"
 		}
 	],
-	"currentBackgroundImageId": "",
+	"currentBackgroundImageId": "url-1767332229662",
 	"socialButtons": [
 		{
 			"id": "github",
