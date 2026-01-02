@@ -58,25 +58,6 @@ export async function saveMusicToLocal(file: File, name: string): Promise<LocalM
 }
 
 /**
- * 保存 URL 音乐到本地存储
- */
-export function saveUrlMusicToLocal(url: string, name: string): LocalMusicItem {
-	const id = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-	const musicItem: LocalMusicItem = {
-		id,
-		name,
-		url,
-		isLocal: true
-	}
-	
-	const list = getLocalMusicList()
-	list.push(musicItem)
-	localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-	
-	return musicItem
-}
-
-/**
  * 从本地存储删除音乐
  */
 export function removeLocalMusic(id: string): void {
@@ -104,6 +85,54 @@ export function clearLocalMusicList(): void {
 		}
 	})
 	localStorage.removeItem(STORAGE_KEY)
+}
+
+/**
+ * 从 Base64 数据创建 Blob URL
+ */
+export function createBlobUrlFromBase64(fileData: string, fileType?: string): string | null {
+	try {
+		// fileData 格式: data:audio/mpeg;base64,...
+		const base64Data = fileData.split(',')[1] || fileData
+		const byteCharacters = atob(base64Data)
+		const byteNumbers = new Array(byteCharacters.length)
+		for (let i = 0; i < byteCharacters.length; i++) {
+			byteNumbers[i] = byteCharacters.charCodeAt(i)
+		}
+		const byteArray = new Uint8Array(byteNumbers)
+		const blob = new Blob([byteArray], { type: fileType || 'audio/mpeg' })
+		return URL.createObjectURL(blob)
+	} catch (error) {
+		console.error('Failed to create blob URL from Base64:', error)
+		return null
+	}
+}
+
+/**
+ * 恢复本地音乐的 URL（如果 blob URL 失效，从 Base64 数据重新创建）
+ */
+export function restoreLocalMusicUrl(localMusic: LocalMusicItem): string {
+	// 如果 URL 不是 blob URL，直接返回
+	if (!localMusic.url.startsWith('blob:')) {
+		return localMusic.url
+	}
+
+	// 如果有 Base64 数据，重新创建 blob URL
+	if (localMusic.fileData) {
+		const newUrl = createBlobUrlFromBase64(localMusic.fileData, localMusic.fileType)
+		if (newUrl) {
+			// 更新 localStorage 中的 URL
+			const list = getLocalMusicList()
+			const updatedList = list.map(m => 
+				m.id === localMusic.id ? { ...m, url: newUrl } : m
+			)
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList))
+			return newUrl
+		}
+	}
+
+	// 如果无法恢复，返回原 URL（可能会失败，但至少不会崩溃）
+	return localMusic.url
 }
 
 /**

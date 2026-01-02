@@ -12,7 +12,6 @@ import initialMusicList from '@/app/music/list.json'
 import {
 	getLocalMusicList,
 	saveMusicToLocal,
-	saveUrlMusicToLocal,
 	removeLocalMusic,
 	convertLocalMusicToFile,
 	type LocalMusicItem
@@ -26,7 +25,6 @@ interface MusicSelectDialogProps {
 }
 
 export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: MusicSelectDialogProps) {
-	const [musicUrl, setMusicUrl] = useState('')
 	const [musicName, setMusicName] = useState('')
 	const [previewFile, setPreviewFile] = useState<{ file: File; previewUrl: string } | null>(null)
 	const [savedMusicList, setSavedMusicList] = useState<MusicItem[]>(initialMusicList as MusicItem[])
@@ -39,7 +37,6 @@ export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: Mus
 
 	useEffect(() => {
 		if (open) {
-			setMusicUrl('')
 			setMusicName('')
 			setPreviewFile(null)
 			// 加载本地音乐列表
@@ -72,7 +69,6 @@ export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: Mus
 		const previewUrl = URL.createObjectURL(file)
 		setPreviewFile({ file, previewUrl })
 		setMusicName(file.name.replace(/\.[^/.]+$/, ''))
-		setMusicUrl('')
 	}
 
 	const handleSelectFromList = (music: MusicItem | LocalMusicItem) => {
@@ -82,29 +78,17 @@ export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: Mus
 	}
 
 	const handleSaveAndSelect = async () => {
-		if (!previewFile && !musicUrl.trim()) {
-			toast.error('请选择音乐文件或输入音乐 URL')
+		if (!previewFile) {
+			toast.error('请选择音乐文件')
 			return
 		}
 
 		setIsSaving(true)
 
 		try {
-			let newMusicName = musicName || '未命名音乐'
-			let musicItem: LocalMusicItem
-
-			if (previewFile) {
-				// 保存文件到本地
-				newMusicName = musicName || previewFile.file.name.replace(/\.[^/.]+$/, '')
-				musicItem = await saveMusicToLocal(previewFile.file, newMusicName)
-			} else if (musicUrl.trim()) {
-				// 保存 URL 到本地
-				newMusicName = musicName || '在线音乐'
-				musicItem = saveUrlMusicToLocal(musicUrl.trim(), newMusicName)
-			} else {
-				toast.error('请选择音乐文件或输入音乐 URL')
-				return
-			}
+			const newMusicName = musicName || previewFile.file.name.replace(/\.[^/.]+$/, '')
+			// 保存文件到本地
+			const musicItem = await saveMusicToLocal(previewFile.file, newMusicName)
 
 			// 更新本地音乐列表
 			setLocalMusicList(getLocalMusicList())
@@ -149,7 +133,6 @@ export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: Mus
 						const hash = await hashFileSHA256(file)
 						const ext = file.name.match(/\.[^.]+$/)?.[0] || '.mp3'
 						const filename = `${hash}${ext}`
-						const publicPath = `/music/${filename}`
 						const tempUrl = `temp-${Date.now()}-${hash}`
 
 						musicFileItems.set(tempUrl, { file, hash })
@@ -158,12 +141,6 @@ export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: Mus
 							url: tempUrl
 						})
 					}
-				} else {
-					// URL 音乐，直接添加
-					musicItemsToSync.push({
-						name: localMusic.name,
-						url: localMusic.url
-					})
 				}
 			}
 
@@ -222,13 +199,8 @@ export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: Mus
 			onSelect(objectUrl, musicName || previewFile.file.name)
 			toast.success('音乐已选择')
 			onClose()
-		} else if (musicUrl.trim()) {
-			// 使用 URL（不保存到列表）
-			onSelect(musicUrl.trim(), musicName || '在线音乐')
-			toast.success('音乐已选择')
-			onClose()
 		} else {
-			toast.error('请选择音乐文件或输入音乐 URL')
+			toast.error('请选择音乐文件')
 		}
 	}
 
@@ -237,7 +209,6 @@ export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: Mus
 			URL.revokeObjectURL(previewFile.previewUrl)
 		}
 		setPreviewFile(null)
-		setMusicUrl('')
 		setMusicName('')
 		onClose()
 	}
@@ -408,36 +379,6 @@ export function MusicSelectDialog({ open, onClose, onSelect, currentMusic }: Mus
 									</div>
 								)}
 							</div>
-						</div>
-
-						<div className='relative'>
-							<div className='absolute inset-0 flex items-center'>
-								<div className='w-full border-t border-gray-300'></div>
-							</div>
-							<div className='relative flex justify-center text-sm'>
-								<span className='text-secondary rounded-lg bg-white px-4 py-1'>或</span>
-							</div>
-						</div>
-
-						{/* 输入音乐 URL */}
-						<div>
-							<label className='text-secondary mb-2 block text-sm font-medium'>音乐 URL</label>
-							<input
-								type='url'
-								value={musicUrl}
-								onChange={e => {
-									setMusicUrl(e.target.value)
-									if (previewFile) {
-										URL.revokeObjectURL(previewFile.previewUrl)
-										setPreviewFile(null)
-										if (fileInputRef.current) {
-											fileInputRef.current.value = ''
-										}
-									}
-								}}
-								placeholder='https://example.com/music.mp3'
-								className='focus:ring-brand w-full rounded-lg border border-gray-300 bg-gray-200 px-4 py-2 focus:ring-2 focus:outline-none'
-							/>
 						</div>
 
 						{/* 音乐名称 */}

@@ -10,6 +10,8 @@ import PlaySVG from '@/svgs/play.svg'
 import { HomeDraggableLayer } from './home-draggable-layer'
 import { Pause } from 'lucide-react'
 import { MusicSelectDialog } from './music-card/components/music-select-dialog'
+import { getLocalMusicList, restoreLocalMusicUrl } from '@/lib/local-music-storage'
+import { toast } from 'sonner'
 
 const MUSIC_FILES = ['/music/christmas.m4a']
 
@@ -28,6 +30,18 @@ export default function MusicCard() {
 	const currentIndexRef = useRef(0)
 	const [showMusicDialog, setShowMusicDialog] = useState(false)
 	const [selectedMusic, setSelectedMusic] = useState<{ url: string; name: string } | null>(null)
+
+	// 从 localStorage 恢复上次选择的音乐
+	useEffect(() => {
+		const localMusicList = getLocalMusicList()
+		if (localMusicList.length > 0) {
+			// 使用第一个本地音乐作为默认选择
+			const firstLocalMusic = localMusicList[0]
+			// 恢复 URL（如果是失效的 blob URL，会从 Base64 数据重新创建）
+			const restoredUrl = restoreLocalMusicUrl(firstLocalMusic)
+			setSelectedMusic({ url: restoredUrl, name: firstLocalMusic.name })
+		}
+	}, [])
 
 	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x + CARD_SPACING + hiCardStyles.width / 2 - styles.offset
 	const y = styles.offsetY !== null ? center.y + styles.offsetY : center.y - clockCardStyles.offset + CARD_SPACING + calendarCardStyles.height + CARD_SPACING
@@ -90,17 +104,54 @@ export default function MusicCard() {
 
 	// Handle selected music change
 	useEffect(() => {
-		if (selectedMusic && audioRef.current) {
-			const wasPlaying = !audioRef.current.paused
-			audioRef.current.pause()
-			audioRef.current.src = selectedMusic.url
-			audioRef.current.loop = false
-			setProgress(0)
-			setCurrentIndex(0)
+		if (!selectedMusic || !audioRef.current) return
 
-			if (wasPlaying) {
-				audioRef.current.play().catch(console.error)
-				setIsPlaying(true)
+		const wasPlaying = !audioRef.current.paused
+		audioRef.current.pause()
+		
+		// 检查 URL 是否有效
+		if (!selectedMusic.url || selectedMusic.url.trim() === '') {
+			console.error('Invalid music URL:', selectedMusic.url)
+			toast.error('无效的音乐 URL')
+			return
+		}
+
+		audioRef.current.src = selectedMusic.url
+		audioRef.current.loop = false
+		setProgress(0)
+		setCurrentIndex(0)
+
+		// 添加错误处理
+		const handleError = () => {
+			console.error('Audio load error for URL:', selectedMusic.url)
+			
+			// 如果是 blob URL 错误，尝试从 localStorage 恢复
+			if (selectedMusic.url.startsWith('blob:')) {
+				const localMusicList = getLocalMusicList()
+				const localMusic = localMusicList.find(m => m.name === selectedMusic.name)
+				if (localMusic) {
+					const restoredUrl = restoreLocalMusicUrl(localMusic)
+					if (audioRef.current && restoredUrl) {
+						audioRef.current.src = restoredUrl
+						setSelectedMusic({ url: restoredUrl, name: localMusic.name })
+						return
+					}
+				}
+			}
+		}
+
+		audioRef.current.addEventListener('error', handleError)
+
+		if (wasPlaying) {
+			audioRef.current.play().catch(error => {
+				console.error('Failed to play audio:', error)
+				setIsPlaying(false)
+			})
+		}
+
+		return () => {
+			if (audioRef.current) {
+				audioRef.current.removeEventListener('error', handleError as any)
 			}
 		}
 	}, [selectedMusic])
