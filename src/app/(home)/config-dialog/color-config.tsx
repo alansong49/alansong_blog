@@ -179,6 +179,10 @@ export function ColorConfig({ formData, setFormData }: ColorConfigProps) {
 						<ColorPicker value={theme.colorArticle ?? DEFAULT_THEME_COLORS.colorArticle} onChange={value => handleThemeColorChange('colorArticle', value)} />
 						<span className='text-xs'>文章背景</span>
 					</div>
+					<div className='flex items-center gap-3'>
+						<ColorPicker value={theme.colorText ?? DEFAULT_THEME_COLORS.colorText ?? '#e6e8e8'} onChange={value => handleThemeColorChange('colorText', value)} />
+						<span className='text-xs'>文字颜色</span>
+					</div>
 				</div>
 			</div>
 

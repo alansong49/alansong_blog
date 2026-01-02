@@ -9,6 +9,7 @@ import MusicSVG from '@/svgs/music.svg'
 import PlaySVG from '@/svgs/play.svg'
 import { HomeDraggableLayer } from './home-draggable-layer'
 import { Pause } from 'lucide-react'
+import { MusicSelectDialog } from './music-card/components/music-select-dialog'
 
 const MUSIC_FILES = ['/music/christmas.m4a']
 
@@ -25,6 +26,8 @@ export default function MusicCard() {
 	const [progress, setProgress] = useState(0)
 	const audioRef = useRef<HTMLAudioElement | null>(null)
 	const currentIndexRef = useRef(0)
+	const [showMusicDialog, setShowMusicDialog] = useState(false)
+	const [selectedMusic, setSelectedMusic] = useState<{ url: string; name: string } | null>(null)
 
 	const x = styles.offsetX !== null ? center.x + styles.offsetX : center.x + CARD_SPACING + hiCardStyles.width / 2 - styles.offset
 	const y = styles.offsetY !== null ? center.y + styles.offsetY : center.y - clockCardStyles.offset + CARD_SPACING + calendarCardStyles.height + CARD_SPACING
@@ -85,6 +88,23 @@ export default function MusicCard() {
 		}
 	}, [currentIndex])
 
+	// Handle selected music change
+	useEffect(() => {
+		if (selectedMusic && audioRef.current) {
+			const wasPlaying = !audioRef.current.paused
+			audioRef.current.pause()
+			audioRef.current.src = selectedMusic.url
+			audioRef.current.loop = false
+			setProgress(0)
+			setCurrentIndex(0)
+
+			if (wasPlaying) {
+				audioRef.current.play().catch(console.error)
+				setIsPlaying(true)
+			}
+		}
+	}, [selectedMusic])
+
 	// Handle play/pause state change
 	useEffect(() => {
 		if (!audioRef.current) return
@@ -110,40 +130,75 @@ export default function MusicCard() {
 		setIsPlaying(!isPlaying)
 	}
 
+	const handleCardDoubleClick = (e: React.MouseEvent) => {
+		// 如果双击的是播放按钮，不处理
+		if ((e.target as HTMLElement).closest('button')) {
+			return
+		}
+		e.stopPropagation()
+		setShowMusicDialog(true)
+	}
+
+	const handleMusicSelect = (url: string, name: string) => {
+		setSelectedMusic({ url, name })
+		// 如果正在播放，停止当前音乐并加载新音乐
+		if (audioRef.current) {
+			const wasPlaying = !audioRef.current.paused
+			audioRef.current.pause()
+			audioRef.current.src = url
+			setProgress(0)
+			if (wasPlaying) {
+				audioRef.current.play().catch(console.error)
+				setIsPlaying(true)
+			}
+		}
+	}
+
 	return (
-		<HomeDraggableLayer cardKey='musicCard' x={x} y={y} width={styles.width} height={styles.height}>
-			<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='flex items-center gap-3'>
-				{siteContent.enableChristmas && (
-					<>
-						<img
-							src='/images/christmas/snow-10.webp'
-							alt='Christmas decoration'
-							className='pointer-events-none absolute'
-							style={{ width: 120, left: -8, top: -12, opacity: 0.8 }}
-						/>
-						<img
-							src='/images/christmas/snow-11.webp'
-							alt='Christmas decoration'
-							className='pointer-events-none absolute'
-							style={{ width: 80, right: -10, top: -12, opacity: 0.8 }}
-						/>
-					</>
-				)}
+		<>
+			<HomeDraggableLayer cardKey='musicCard' x={x} y={y} width={styles.width} height={styles.height}>
+				<Card order={styles.order} width={styles.width} height={styles.height} x={x} y={y} className='flex items-center gap-3'>
+					<div className='flex w-full items-center gap-3 cursor-pointer' onDoubleClick={handleCardDoubleClick}>
+						{siteContent.enableChristmas && (
+							<>
+								<img
+									src='/images/christmas/snow-10.webp'
+									alt='Christmas decoration'
+									className='pointer-events-none absolute'
+									style={{ width: 120, left: -8, top: -12, opacity: 0.8 }}
+								/>
+								<img
+									src='/images/christmas/snow-11.webp'
+									alt='Christmas decoration'
+									className='pointer-events-none absolute'
+									style={{ width: 80, right: -10, top: -12, opacity: 0.8 }}
+								/>
+							</>
+						)}
 
-				<MusicSVG className='h-8 w-8' />
+						<MusicSVG className='h-8 w-8' />
 
-				<div className='flex-1'>
-					<div className='text-secondary text-sm'>圣诞音乐</div>
+						<div className='flex-1'>
+							<div className='text-secondary text-sm'>{selectedMusic?.name || '圣诞音乐'}</div>
 
-					<div className='mt-1 h-2 rounded-full bg-white/60'>
-						<div className='bg-linear h-full rounded-full transition-all duration-300' style={{ width: `${progress}%` }} />
+							<div className='mt-1 h-2 rounded-full bg-white/60'>
+								<div className='bg-linear h-full rounded-full transition-all duration-300' style={{ width: `${progress}%` }} />
+							</div>
+						</div>
+
+						<button onClick={togglePlayPause} className='flex h-10 w-10 items-center justify-center rounded-full bg-white transition-opacity hover:opacity-80'>
+							{isPlaying ? <Pause className='text-brand h-4 w-4' /> : <PlaySVG className='text-brand ml-1 h-4 w-4' />}
+						</button>
 					</div>
-				</div>
+				</Card>
+			</HomeDraggableLayer>
 
-				<button onClick={togglePlayPause} className='flex h-10 w-10 items-center justify-center rounded-full bg-white transition-opacity hover:opacity-80'>
-					{isPlaying ? <Pause className='text-brand h-4 w-4' /> : <PlaySVG className='text-brand ml-1 h-4 w-4' />}
-				</button>
-			</Card>
-		</HomeDraggableLayer>
+			<MusicSelectDialog
+				open={showMusicDialog}
+				onClose={() => setShowMusicDialog(false)}
+				onSelect={handleMusicSelect}
+				currentMusic={selectedMusic?.url}
+			/>
+		</>
 	)
 }

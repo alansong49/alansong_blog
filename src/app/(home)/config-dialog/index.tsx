@@ -186,7 +186,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 	const updateThemeVariables = (theme?: SiteContent['theme']) => {
 		if (typeof document === 'undefined' || !theme) return
 
-		const { colorBrand, colorBrandSecondary, colorPrimary, colorSecondary, colorBg, colorBorder, colorCard, colorArticle } = theme
+		const { colorBrand, colorBrandSecondary, colorPrimary, colorSecondary, colorBg, colorBorder, colorCard, colorArticle, colorText } = theme
 
 		const root = document.documentElement
 
@@ -198,6 +198,7 @@ export default function ConfigDialog({ open, onClose }: ConfigDialogProps) {
 		if (colorBorder) root.style.setProperty('--color-border', colorBorder)
 		if (colorCard) root.style.setProperty('--color-card', colorCard)
 		if (colorArticle) root.style.setProperty('--color-article', colorArticle)
+		if (colorText) root.style.setProperty('--color-text', colorText)
 	}
 
 	const handlePreview = () => {

@@ -28,6 +28,12 @@ export function getFileExt(filename: string): string {
 	if (lower.endsWith('.webp')) return '.webp'
 	if (lower.endsWith('.png')) return '.png'
 	if (lower.endsWith('.svg')) return '.svg'
+	if (lower.endsWith('.mp3')) return '.mp3'
+	if (lower.endsWith('.m4a')) return '.m4a'
+	if (lower.endsWith('.wav')) return '.wav'
+	if (lower.endsWith('.ogg')) return '.ogg'
+	if (lower.endsWith('.flac')) return '.flac'
+	if (lower.endsWith('.aac')) return '.aac'
 	return '.png'
 }
 

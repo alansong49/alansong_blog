@@ -19,6 +19,110 @@ export const GITHUB_CONFIG = {
 
 也可以自己手动先调整安装，可自行 `pnpm i`
 
+### 本地开发部署
+
+#### 前置要求
+
+1. **安装 Node.js**（推荐版本 18+）
+   - 下载地址：https://nodejs.org/
+   - 安装完成后，在终端运行 `node -v` 和 `npm -v` 验证安装
+
+2. **安装 pnpm**（推荐，更快更节省空间）
+   
+   **方法一：使用 npm 安装（推荐）**
+   ```bash
+   npm install -g pnpm
+   ```
+   
+   **方法二：使用 PowerShell 安装（Windows）**
+   ```powershell
+   iwr https://get.pnpm.io/install.ps1 -useb | iex
+   ```
+   
+   安装完成后，重启终端或运行：
+   ```powershell
+   $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+   ```
+   
+   验证安装：`pnpm -v`
+
+   **方法三：使用 npm/yarn 替代**
+   如果不想安装 pnpm，也可以使用 npm 或 yarn：
+   ```bash
+   npm install
+   # 或
+   yarn install
+   ```
+
+#### 开始部署
+
+1. **安装依赖**
+   ```bash
+   pnpm install
+   ```
+   
+   如果使用 npm：
+   ```bash
+   npm install
+   ```
+   
+   如果使用 yarn：
+   ```bash
+   yarn install
+   ```
+
+2. **配置环境变量（可选）**
+   
+   创建 `.env.local` 文件（如果不存在），添加以下环境变量：
+   ```env
+   NEXT_PUBLIC_GITHUB_OWNER=your-github-username
+   NEXT_PUBLIC_GITHUB_REPO=your-repo-name
+   NEXT_PUBLIC_GITHUB_BRANCH=main
+   NEXT_PUBLIC_GITHUB_APP_ID=your-app-id
+   NEXT_PUBLIC_GITHUB_ENCRYPT_KEY=your-encrypt-key
+   ```
+   
+   或者直接修改 `src/consts.ts` 文件中的默认值。
+
+3. **启动开发服务器**
+   ```bash
+    
+   ```
+   
+   如果使用 npm：
+   ```bash
+   npm run dev
+   ```
+   
+   如果使用 yarn：
+   ```bash
+   yarn dev
+   ```
+   
+   项目将在 `http://localhost:2025` 运行
+
+4. **构建生产版本**
+   ```bash
+   pnpm build
+   pnpm start
+   ```
+   
+   如果使用 npm：
+   ```bash
+   npm run build
+   npm start
+   ```
+   
+   如果使用 yarn：
+   ```bash
+   yarn build
+   yarn start
+   ```
+
+5. **本地预览生产构建**
+   
+   构建完成后，运行 `pnpm start`（或 `npm start` / `yarn start`）即可预览生产版本
+
 ## 2. 部署
 
 我这里熟悉 Vercel 部署，就以 Vercel 部署为例子。创建 Project => Import 这个项目

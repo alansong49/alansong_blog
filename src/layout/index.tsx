@@ -42,6 +42,7 @@ export default function Layout({ children }: PropsWithChildren) {
 			{currentBackgroundImage && (
 				<div
 					className='fixed inset-0 z-0 overflow-hidden'
+					suppressHydrationWarning
 					style={{
 						backgroundImage: `url(${currentBackgroundImage.url})`,
 						backgroundSize: 'cover',

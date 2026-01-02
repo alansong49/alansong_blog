@@ -32,7 +32,8 @@ const htmlStyle = {
 	'--color-bg': theme.colorBg,
 	'--color-border': theme.colorBorder,
 	'--color-card': theme.colorCard,
-	'--color-article': theme.colorArticle
+	'--color-article': theme.colorArticle,
+	...(theme.colorText && { '--color-text': theme.colorText })
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -40,7 +41,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 		<html lang='en' suppressHydrationWarning style={htmlStyle}>
 			<Head />
 
-			<body>
+			<body suppressHydrationWarning>
 				<script
 					dangerouslySetInnerHTML={{
 						__html: `

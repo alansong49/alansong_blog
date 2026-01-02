@@ -13,7 +13,8 @@
 
 @layer base {
 	html {
-		@apply text-primary bg-bg h-full leading-tight;
+		@apply bg-bg h-full leading-tight;
+		color: var(--color-text, var(--color-primary));
 		scroll-behavior: smooth;
 	}
 
